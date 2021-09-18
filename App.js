@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, TextInput, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Image, TextInput, ImageBackground, Alert, FlatList, TouchableWithoutFeedback  } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const Stack = createStackNavigator();
 
@@ -97,7 +98,7 @@ function RegistrationScreen({navigation}) {
   const [location, setLocation] = React.useState(null); 
   const [password, setPassword] = React.useState(null);  
   const [confirmPassword, setConfirmPassword] = React.useState(null);
-  console.log("My log text");
+  // console.log(x);
 
   return( 
     <View style={styles.register_container}>
@@ -193,18 +194,83 @@ function ForgotScreen({navigation}) {
 
 function HomeScreen({navigation}) {
 
-  const onPressHandler = () => {
-    navigation.goBack();
+  const [people, setPeople] = useState([
+    { name: 'Money heist 5 part 1', language: 'Release Sep 3', id: '1' },
+    { name: 'Money heist 5 part 2', language: 'Release Sep 3' ,id: '2' },
+    { name: 'Money heist 5 part 3', language: 'Release Sep 3' ,id: '3' },
+    // { name: 'Money heist 5 part 4', language: 'Release Sep 3' ,id: '4' },
+    // { name: 'Money heist 5 part 5', language: 'Release Sep 3' ,id: '5' },
+    // { name: 'Money heist 5 part 6', language: 'Release Dec 3' ,id: '6' },
+    // { name: 'Money heist 5 part 7', language: 'Release Dec 3' ,id: '7' },
+    // { name: 'Money heist 5 part 7', language: 'Release Dec 3' ,id: '8' },
+  ])
+
+  const SearchFilterFunction = (text) => {
+    //passing the inserted text in textinput
+    const newData = this.arrayholder.filter(function(item) {
+      //applying filter for the inserted text in search bar
+      const itemData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    this.setState({
+      //setting the filtered newData on datasource
+      //After setting the data it will automatically re-render the view
+      dataSource: newData,
+      text: text,
+    });
   }
 
+  //handling onPress action  
+  const getListViewItem = (item) => {  
+    // Alert.alert(item.name);  
+    Alert.alert(
+      item.name,
+      item.language,
+      [
+        { text: "OK", onPress: () => console.log("OK Pressed") }
+      ]
+    );
+  } 
+
   return( 
-    <View>
+    <View style={{ backgroundColor: "#fff", height: "100%"}}>
       <View style={styles.home_container}>
-        <Image source = {require('C:/Users/giriv/Desktop/react_native_demo/blog_project/Bloggy/assets/user.png')} style = {{ position: 'absolute', right: 20, top: 20, width: 75, height: 75 }} />
+        <Image source = {require('../Bloggy/assets/user.png')} style = {{ position: 'absolute', right: 20, top: 20, width: 75, height: 75 }} />
         <Text style={styles.title}>Blog</Text>
         <Text style={styles.text_content}>Hey buggy</Text>
       </View>
-      <Text style = {{ position: 'relative', top: 250, left: 0, right: 0, bottom: 0, color: "#f67d48", fontSize: 24, textAlign: 'center', }}>No blog available</Text>
+      <TextInput
+          style={styles.textInputStyle}
+          onChangeText={text => SearchFilterFunction(text)}
+          // value={state.text}
+          underlineColorAndroid="transparent"
+          clearButtonMode="always"
+          placeholder="Search for blog"
+          placeholderTextColor="#000"
+        />
+        <Text style={styles.title}>Latest concept</Text>
+      <View>
+        <FlatList
+        keyExtractor={(item) => item.id}
+        data={people}
+        renderItem={({ item, index }) => {
+            return <View style={{flexDirection: 'row-reverse'}}>
+                <View style={styles.image_item}>
+                  <TouchableWithoutFeedback  onPress={getListViewItem.bind(this, item)}>
+                    <Image source = {require('../Bloggy/assets/next.png')} style = {{ alignItems: 'center', justifyContent: 'center', marginEnd: 20, width: 40, height: 40 }} />
+                  </TouchableWithoutFeedback >
+                </View>
+                <View style={styles.text_item}>
+                  <Text>{item.name}</Text>
+                  <View style={styles.space_between_text}></View>
+                  <Text>{item.language}</Text>
+                </View>
+            </View>
+        }}
+        />
+      </View>
+      <Image source = {require('../Bloggy/assets/plus.png')} style = {{ position: 'absolute', top: "90%", left: "80%", right: "20%", bottom: "10%", justifyContent: 'center', alignItems: 'center', width: 50, height: 50 }} />
     </View>
   )
 }
@@ -321,4 +387,44 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     height: "100%"
   },
+  textInputStyle: {
+    height: 50,
+    borderWidth: 1,
+    paddingStart: 20,
+    borderColor: '#000',
+    backgroundColor: '#00000000',
+    borderRadius: 20,
+    marginTop: 40,
+    marginEnd: 20,
+    marginStart: 20,
+  },
+  image_item: {
+    width: '15%',
+    marginTop: 15,
+    paddingTop: 35,
+    paddingBottom: 30,
+    marginEnd: 20,
+    backgroundColor: '#fef2ec',
+    borderWidth: 1,
+    borderColor: '#fef2ec',
+    borderTopEndRadius: 20,
+    borderBottomEndRadius: 20,
+  },
+  text_item: {
+    width: '75%',
+    marginTop: 15,
+    paddingTop: 30,
+    paddingBottom: 30,
+    paddingStart: 20,
+    marginStart: 20,
+    backgroundColor: '#fef2ec',
+    borderWidth: 1,
+    borderTopStartRadius: 20,
+    borderBottomStartRadius: 20,
+    borderColor: '#fef2ec',
+    fontSize: 18
+  },
+  space_between_text: {
+    margin: 5,
+  }
 });
