@@ -5,7 +5,6 @@ import * as SplashScreen from 'expo-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
-import { ScrollView } from 'react-native-gesture-handler';
 
 const Stack = createStackNavigator();
 
@@ -224,19 +223,24 @@ function HomeScreen({navigation}) {
   //handling onPress action  
   const getListViewItem = (item) => {  
     // Alert.alert(item.name);  
-    Alert.alert(
-      item.name,
-      item.language,
-      [
-        { text: "OK", onPress: () => console.log("OK Pressed") }
-      ]
-    );
+    // Alert.alert(
+    //   item.name,
+    //   item.language,
+    //   [
+    //     { text: "OK", onPress: () => console.log("OK Pressed") }
+    //   ]
+    // );
+    // Route concept
+     navigation.navigate('View blogs', item)
+
   } 
 
   return( 
     <View style={{ backgroundColor: "#fff", height: "100%"}}>
       <View style={styles.home_container}>
-        <Image source = {require('../Bloggy/assets/user.png')} style = {{ position: 'absolute', right: 20, top: 20, width: 75, height: 75 }} />
+        <TouchableWithoutFeedback onPress={() => navigation.navigate('Profile')}> 
+          <Image source = {require('../Bloggy/assets/user.png')} style = {{ position: 'absolute', right: 20, top: 20, width: 75, height: 75 }} />
+        </TouchableWithoutFeedback >
         <Text style={styles.title}>Blog</Text>
         <Text style={styles.text_content}>Hey buggy</Text>
       </View>
@@ -257,7 +261,7 @@ function HomeScreen({navigation}) {
         renderItem={({ item, index }) => {
             return <View style={{flexDirection: 'row-reverse'}}>
                 <View style={styles.image_item}>
-                  <TouchableWithoutFeedback  onPress={getListViewItem.bind(this, item)}>
+                  <TouchableWithoutFeedback  onPress={getListViewItem.bind(this, item)}> 
                     <Image source = {require('../Bloggy/assets/next.png')} style = {{ alignItems: 'center', justifyContent: 'center', marginEnd: 20, width: 40, height: 40 }} />
                   </TouchableWithoutFeedback >
                 </View>
@@ -270,9 +274,329 @@ function HomeScreen({navigation}) {
         }}
         />
       </View>
-      <Image source = {require('../Bloggy/assets/plus.png')} style = {{ position: 'absolute', top: "90%", left: "80%", right: "20%", bottom: "10%", justifyContent: 'center', alignItems: 'center', width: 50, height: 50 }} />
+      <TouchableWithoutFeedback onPress={() => navigation.navigate('Create blog')}> 
+        <Image source = {require('../Bloggy/assets/plus.png')} style = {{ position: 'absolute', top: "90%", left: "80%", right: "20%", bottom: "10%", justifyContent: 'center', alignItems: 'center', width: 50, height: 50 }} />
+      </TouchableWithoutFeedback >
     </View>
   )
+}
+
+function ViewScreen({route}) {
+
+  // console.warn(route)
+
+  const onPressHandler = () => {
+    navigation.goBack();
+  }
+
+  return( 
+    <View style={{ backgroundColor: "#fff", height: "100%", flex: 1}}>
+      <View style={{ flexDirection: "column", justifyContent: 'flex-start', alignItems: 'flex-end'}}>
+        <Text style = {{ position: 'relative', right: 20, top: 20, width: "20%", fontWeight: "bold", color: "#AB2524", fontSize: 18, }}>Netflix</Text>
+        <Text style = {{ position: 'relative', right: 20, top: 20, width: "23%", color: "#AB2524", fontSize: 16 }}>Post author</Text>
+      </View>
+      <View style={{ flexDirection: "column", justifyContent: 'flex-start', marginTop: 10}}>
+        <Text style = {{ position: 'relative', left: 20, right: 0,  width: "100%", marginTop: 10, color: "#000", fontWeight: "bold", fontSize: 20 }}> { route.params.name }</Text>
+        <Image source = {require('../Bloggy/assets/moneyheist.jpg')} style = {{alignItems: 'center', position: 'relative', left: 20, right: 20, width: "90%", height: 200, borderRadius: 20, marginTop: 10 }} />
+        <Text style = {{ position: 'relative', left: 20, right: 20, width: "90%", color: "#000", fontSize: 14, marginTop: 10 }}>Money Heist (Spanish: La casa de papel, "The House of Paper") is a Spanish heist crime drama television series created by Álex Pina.</Text>
+        <Text style = {{ position: 'relative', left: 20, right: 20, width: "90%", color: "#000", fontSize: 14, marginTop: 10 }}>The series traces two long-prepared heists led by the Professor (Álvaro Morte), one on the Royal Mint of Spain, and one on the Bank of Spain, told from the perspective of one of the robbers, Tokyo (Úrsula Corberó). {"\n"}{"\n"} The narrative is told in a real-time-like fashion and relies on flashbacks, time-jumps, hidden character motivations, and an unreliable narrator for complexity.{"\n"}{"\n"} Studies have shown that the most popular language is English, although the series is Spanish.</Text>
+      <View style={{ borderBottomColor: 'black', borderBottomWidth: 1, marginTop: 10, marginStart: 20, marginEnd: 20 }}/>
+      <Text style = {{ position: 'relative', left: 20, right: 0,  width: "100%", marginTop: 10, color: "#000", fontWeight: "bold", fontSize: 20 }}>Comments (0)</Text>
+      <View style={{ borderBottomColor: 'black', borderBottomWidth: 1, marginTop: 10, marginBottom: 10, marginStart: 20, marginEnd: 20 }}/>
+      <View style={styles.SectionStyle}>
+        <Image source={require('../Bloggy/assets/chat.png')} style={styles.ImageStyle}/>
+        <TextInput placeholder="Add a new comment" underlineColorAndroid="transparent" />
+      </View>
+    </View>
+  </View>
+  )
+
+}
+
+function AddScreen({navigation}) {
+
+  const onPressHandler = () => {
+    navigation.goBack();
+  }
+
+  const [title, setTitle] = React.useState(null);  
+  const [content, setContent] = React.useState(null); 
+  const [details, setDetails] = React.useState(null);
+
+  return( 
+    <View style={{ backgroundColor: "#fff", height: "100%", flex: 1}}>
+      <View style={{  marginTop: 10}}>
+        <Text style = {{ position: 'relative', left: 20, right: 0,  width: "100%", marginTop: 10, color: "#000", fontSize: 18 }}>Title</Text>
+    </View>
+    <View style={{  borderColor: '#000', padding: 10, textAlignVertical : "top",borderWidth: 1,borderRadius: 10, marginTop: 20, marginStart: 20, marginEnd: 20 }}>
+      <UselessTextInput numberOfLines={2} placeholderTextColor="#f67d48" placeholder="Add title" onChangeText={setTitle} value={title} />
+    </View>
+    <View style={{  marginTop: 10}}>
+        <Text style = {{ position: 'relative', left: 20, right: 0,  width: "100%", marginTop: 10, color: "#000", fontSize: 18 }}>Caption</Text>
+    </View>
+    <View style={{  borderColor: '#000', padding: 10, textAlignVertical : "top",borderWidth: 1,borderRadius: 10, marginTop: 20, marginStart: 20, marginEnd: 20 }}>
+      <UselessTextInput numberOfLines={2} placeholderTextColor="#f67d48" placeholder="Add caption included double quotes" onChangeText={setContent} value={content} />
+    </View>
+    <View style={{  marginTop: 10}}>
+        <Text style = {{ position: 'relative', left: 20, right: 0,  width: "100%", marginTop: 10, color: "#000", fontSize: 18 }}>Details</Text>
+    </View>
+    <View style={{  borderColor: '#000', padding: 10, textAlignVertical : "top",borderWidth: 1,borderRadius: 10, marginTop: 20, marginStart: 20, marginEnd: 20 }}>
+      <TextInput value={details} onChangeText={setDetails} multiline={true} placeholderTextColor="#f67d48" placeholder="Add Details about blog" numberOfLines={8} />
+    </View>
+    <View style={ styles.bottomView}>
+          <TouchableOpacity style={styles.button_full_bg} onPress={onPressHandler} >
+            <Text style={styles.button_text_content_bg}> Create </Text>
+          </TouchableOpacity>
+        </View>
+  </View>
+  )
+
+}
+
+function ProfileScreen({navigation}) {
+
+  const onPressHandler = () => {
+    navigation.goBack();
+  }
+
+  const createTwoButtonAlert = () =>
+    Alert.alert(
+      "Alert Diaog",
+      "Are you sure want to logout",
+      [
+        {
+          text: "No",
+          onPress: () => console.log("Canceled"),
+          style: "No"
+        },
+        { text: "Yes", onPress: () => navigation.navigate('Home Lists') }
+      ]
+    );
+
+  return( 
+    <View style={{ backgroundColor: "#fff", height: "100%"}}>
+      <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+        <TouchableWithoutFeedback onPress={() => navigation.navigate('Profile')}> 
+          <Image source = {require('../Bloggy/assets/user.png')} style = {{ width: 140, height: 140, marginTop: 60 }} />
+        </TouchableWithoutFeedback >
+        <Text style={styles.profile_title}>ProjectX</Text>
+        <Text style={styles.profile_text_content}>Trichy</Text>
+        <Text style={styles.profile_text_content}>8903830040</Text>
+      </View>
+      <View style={{ borderBottomColor: 'black', borderBottomWidth: 1, marginTop: 20, marginStart: 20, marginEnd: 20 }}/>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
+        <Text style = {{ color: "#000", fontWeight: "bold", fontSize: 20, marginStart: 20, alignSelf: 'center' }}>Profile Info</Text>
+        <TouchableWithoutFeedback onPress={() => navigation.navigate('Personal info')}> 
+          <Image source = {require('../Bloggy/assets/next.png')} style = {{ alignItems: 'center', justifyContent: 'center', marginEnd: 20, width: 40, height: 40 }} />
+        </TouchableWithoutFeedback >
+      </View>
+      <View style={{ borderBottomColor: 'black', borderBottomWidth: 1, marginTop: 10, marginBottom: 10, marginStart: 20, marginEnd: 20 }}/>
+
+      <View style={{ borderBottomColor: 'black', borderBottomWidth: 1, marginTop: 10, marginStart: 20, marginEnd: 20 }}/>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
+        <Text style = {{ color: "#000", fontWeight: "bold", fontSize: 20, marginStart: 20, alignSelf: 'center' }}>Our blogs</Text>
+        <TouchableWithoutFeedback onPress={() => navigation.navigate('Our blogs')}> 
+          <Image source = {require('../Bloggy/assets/next.png')} style = {{ alignItems: 'center', justifyContent: 'center', marginEnd: 20, width: 40, height: 40 }} />
+        </TouchableWithoutFeedback >
+      </View>
+      <View style={{ borderBottomColor: 'black', borderBottomWidth: 1, marginTop: 10, marginBottom: 10, marginStart: 20, marginEnd: 20 }}/>
+
+      <View style={{ borderBottomColor: 'black', borderBottomWidth: 1, marginTop: 10, marginStart: 20, marginEnd: 20 }}/>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
+        <Text style = {{ color: "#000", fontWeight: "bold", fontSize: 20, marginStart: 20, alignSelf: 'center' }}>Change password</Text>
+        <TouchableWithoutFeedback  onPress={() => navigation.navigate('Change password')} > 
+          <Image source = {require('../Bloggy/assets/next.png')} style = {{ alignItems: 'center', justifyContent: 'center', marginEnd: 20, width: 40, height: 40 }} />
+        </TouchableWithoutFeedback >
+      </View>
+      <View style={{ borderBottomColor: 'black', borderBottomWidth: 1, marginTop: 10, marginBottom: 10, marginStart: 20, marginEnd: 20 }}/>
+
+      <View style={{ borderBottomColor: 'black', borderBottomWidth: 1, marginTop: 10, marginStart: 20, marginEnd: 20 }}/>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
+        <Text style = {{ color: "#000", fontWeight: "bold", fontSize: 20, marginStart: 20, alignSelf: 'center' }}>Logout</Text>
+        <TouchableWithoutFeedback onPress={createTwoButtonAlert}> 
+          <Image source = {require('../Bloggy/assets/next.png')} style = {{ alignItems: 'center', justifyContent: 'center', marginEnd: 20, width: 40, height: 40 }} />
+        </TouchableWithoutFeedback >
+      </View>
+      <View style={{ borderBottomColor: 'black', borderBottomWidth: 1, marginTop: 10, marginBottom: 10, marginStart: 20, marginEnd: 20 }}/>
+    </View>
+  )
+
+}
+
+function ChangeScreen({navigation}) {
+
+  const onPressHandler = () => {
+    navigation.goBack();
+  }
+
+  const [value, onChangeText] = React.useState(null);  
+
+  return( 
+    <View style={styles.login_container}>
+      <ImageBackground source= {require('C:/Users/giriv/Desktop/react_native_demo/blog_project/Bloggy/assets/forgot.png')} resizeMode="cover" style={styles.bg_login_image}>
+      <View style={{  borderColor: '#f67d48',padding: 10, textAlignVertical : "top",borderWidth: 1,borderRadius: 10, marginTop: 75, marginStart: 20, marginEnd: 20 }}>
+          <UselessTextInput numberOfLines={2} placeholder="Current Password" placeholderTextColor="#f67d48" onChangeText={onChangeText} value={value} />
+        </View>
+        <View style={{  borderColor: '#f67d48',padding: 10, textAlignVertical : "top",borderWidth: 1,borderRadius: 10, marginTop: 30, marginStart: 20, marginEnd: 20 }}>
+          <UselessTextInput numberOfLines={2} placeholder="Password" placeholderTextColor="#f67d48" onChangeText={onChangeText} value={value} />
+        </View>
+        <View style={{  borderColor: '#f67d48', padding: 10, textAlignVertical : "top",borderWidth: 1,borderRadius: 10, marginTop: 30, marginStart: 20, marginEnd: 20, marginBottom: 75 }}>
+          <UselessTextInput numberOfLines={2} placeholder="Confirm password" placeholderTextColor="#f67d48" onChangeText={onChangeText} value={value} />
+        </View>
+        <View style={styles.button_space}>
+          <TouchableOpacity style={styles.button_bg}  onPress={onPressHandler} >
+            <Text style={styles.button_text_content_bg}> Update </Text>
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
+    </View>
+  )
+}
+
+function PersonalScreen({navigation}) {
+
+  const onPressHandler = () => {
+    navigation.goBack();
+  }
+
+  const [name, setName] = React.useState(null);  
+  const [dob, setDOB] = React.useState(null);  
+  const [email, setEmail] = React.useState(null); 
+  const [mobile, setMobile] = React.useState(null); 
+  const [location, setLocation] = React.useState(null); 
+  // console.log(x);
+
+  return( 
+    <View style={{ backgroundColor: "#fff", height: "100%", flex: 1}}>
+      <ImageBackground source= {require('C:/Users/giriv/Desktop/react_native_demo/blog_project/Bloggy/assets/register.png')} resizeMode="cover" style={styles.personal_bg_image}>
+        <View style={{  borderColor: '#f67d48', padding: 10, borderWidth: 1,borderRadius: 10, marginStart: 30, marginEnd: 30, marginTop: 80 }}>
+          <UselessTextInput numberOfLines={2} placeholder="Full name" placeholderTextColor="#f67d48" onChangeText={setName} value={name} />
+        </View>
+        <View style={{  borderColor: '#f67d48', padding: 10, borderWidth: 1,borderRadius: 10, marginStart: 30, marginEnd: 30, marginTop: 30 }}>
+          <UselessTextInput numberOfLines={2} placeholder="Date of birth" placeholderTextColor="#f67d48"  onChangeText={setDOB} value={dob} />
+        </View>
+        <View style={{  borderColor: '#f67d48',padding: 10, borderWidth: 1,borderRadius: 10, marginStart: 30, marginEnd: 30, marginTop: 30 }}>
+          <UselessTextInput numberOfLines={2} placeholder="Email address" placeholderTextColor="#f67d48" onChangeText={setEmail} value={email} />
+        </View>
+        <View style={{  borderColor: '#f67d48',padding: 10, borderWidth: 1,borderRadius: 10, marginStart: 30, marginEnd: 30, marginTop: 30 }}>
+          <UselessTextInput numberOfLines={2} placeholder="Mobile number" placeholderTextColor="#f67d48"  onChangeText={setMobile} value={mobile} />
+        </View>
+        <View style={{  borderColor: '#f67d48', padding: 10, borderWidth: 1,borderRadius: 10, marginStart: 30, marginEnd: 30, marginTop: 30 }}>
+          <UselessTextInput numberOfLines={2} placeholder="Location" placeholderTextColor="#f67d48"  onChangeText={setLocation} value={location} />
+        </View>
+        <View style={ styles.bottomView}>
+          <TouchableOpacity style={styles.button_full_bg} onPress={onPressHandler} >
+            <Text style={styles.button_text_content_bg}> Update </Text>
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>      
+    </View>
+  )
+}
+
+function BlogScreen({navigation}) {
+
+  const [people, setPeople] = useState([
+    { name: 'Money heist 5 part 1', language: 'Release Sep 3', id: '1' },
+    { name: 'Money heist 5 part 2', language: 'Release Sep 3' ,id: '2' },
+    { name: 'Money heist 5 part 3', language: 'Release Sep 3' ,id: '3' },
+    { name: 'Money heist 5 part 4', language: 'Release Sep 3' ,id: '4' },
+    { name: 'Money heist 5 part 5', language: 'Release Sep 3' ,id: '5' },
+  ])
+
+  //handling onPress action  
+  const getListViewItem = (item) => {  
+     navigation.navigate('Update blog', item)
+  } 
+
+  const createTwoButtonAlert = (item) => {
+    Alert.alert(
+      "Alert Diaog",
+      "Are you sure want to delete " + item.name + " post blog",
+      [
+        {
+          text: "No",
+          onPress: () => console.log("Canceled"),
+          style: "No"
+        },
+        { text: "Yes", onPress: () => console.log("Deleted") }
+      ]
+    );
+    // Alert.alert(item.name);
+  }
+
+  const onPressHandler = () => {
+    navigation.goBack();
+  }
+
+  return( 
+    <View style={{ backgroundColor: "#fff", height: "100%", flex: 1}}>
+        <Text style={styles.title}>Total post (5)</Text>
+        <FlatList
+        keyExtractor={(item) => item.id}
+        data={people}
+        renderItem={({ item, index }) => {
+            return <View style={{ backgroundColor: "#fff", height: "100%", flex: 1}}>
+                <View style={{ flexDirection: 'row', backgroundColor: '#fef2ec', borderWidth: 1, borderColor: '#fef2ec', marginStart: 20, marginTop: 15, marginEnd: 20, padding: 20, borderRadius: 20}}>
+                  <TouchableWithoutFeedback onPress={createTwoButtonAlert.bind(this, item)}> 
+                    <Image source = {require('../Bloggy/assets/delete.png')} style = {{ alignItems: 'center', justifyContent: 'center', marginEnd: 20, width: 40, height: 40, marginStart: 0, marginTop: 5 }} />
+                  </TouchableWithoutFeedback >
+                    <View style={{ flexDirection: 'column', }}>
+                      <Text>{item.name}</Text>
+                      <View style={styles.space_between_text}></View>
+                      <Text>{item.language}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'column',  position: 'absolute', right: 20, top: 0, paddingTop: 25}}>
+                      <TouchableWithoutFeedback  onPress={getListViewItem.bind(this, item)}> 
+                        <Image source = {require('../Bloggy/assets/next.png')} style = {{ width: 40, height: 40 }} />
+                      </TouchableWithoutFeedback >
+                    </View>
+                </View>
+            </View>
+        }}
+        />
+    </View>
+  )
+}
+
+function UpdateScreen({route, navigation}) {
+
+  const onPressHandler = () => {
+    navigation.goBack();
+  }
+
+  const [title, setTitle] = React.useState(route.params.name);  
+  const [content, setContent] = React.useState('Money Heist (Spanish: La casa de papel, "The House of Paper") is a Spanish heist crime drama television series created by Álex Pina.'); 
+  const [details, setDetails] = React.useState('The series traces two long-prepared heists led by the Professor (Álvaro Morte), one on the Royal Mint of Spain, and one on the Bank of Spain, told from the perspective of one of the robbers, Tokyo (Úrsula Corberó). \n\n The narrative is told in a real-time-like fashion and relies on flashbacks, time-jumps, hidden character motivations, and an unreliable narrator for complexity.\n\n Studies have shown that the most popular language is English, although the series is Spanish.');
+
+  return( 
+    <View style={{ backgroundColor: "#fff", height: "100%", flex: 1}}>
+      <View style={{  marginTop: 10}}>
+        <Text style = {{ position: 'relative', left: 20, right: 0,  width: "100%", marginTop: 10, color: "#000", fontSize: 18 }}>Title</Text>
+    </View>
+    <View style={{  borderColor: '#000', padding: 10, textAlignVertical : "top",borderWidth: 1,borderRadius: 10, marginTop: 20, marginStart: 20, marginEnd: 20 }}>
+      <UselessTextInput numberOfLines={2} placeholderTextColor="#f67d48" placeholder="Add title" onChangeText={setTitle} value={title} />
+    </View>
+    <View style={{  marginTop: 10}}>
+        <Text style = {{ position: 'relative', left: 20, right: 0,  width: "100%", marginTop: 10, color: "#000", fontSize: 18 }}>Caption</Text>
+    </View>
+    <View style={{  borderColor: '#000', padding: 10, textAlignVertical : "top",borderWidth: 1,borderRadius: 10, marginTop: 20, marginStart: 20, marginEnd: 20 }}>
+      <UselessTextInput numberOfLines={2} placeholderTextColor="#f67d48" placeholder="Add caption included double quotes" onChangeText={setContent} value={content} />
+    </View>
+    <View style={{  marginTop: 10}}>
+        <Text style = {{ position: 'relative', left: 20, right: 0,  width: "100%", marginTop: 10, color: "#000", fontSize: 18 }}>Details</Text>
+    </View>
+    <View style={{  borderColor: '#000', padding: 10, textAlignVertical : "top",borderWidth: 1,borderRadius: 10, marginTop: 20, marginStart: 20, marginEnd: 20 }}>
+      <TextInput value={details} onChangeText={setDetails} multiline={true} placeholderTextColor="#f67d48" placeholder="Add Details about blog" numberOfLines={8} />
+    </View>
+    <View style={ styles.bottomView}>
+          <TouchableOpacity style={styles.button_full_bg} onPress={onPressHandler} >
+            <Text style={styles.button_text_content_bg}> Update </Text>
+          </TouchableOpacity>
+        </View>
+  </View>
+  )
+
 }
 
 export default function App() {
@@ -285,6 +609,13 @@ export default function App() {
         <Stack.Screen name="Welcome" component={LoginScreen} />
         <Stack.Screen name="Forgot password" component={ForgotScreen} />
         <Stack.Screen name="Home Lists" component={HomeScreen} options={{ header: () => null }}/>
+        <Stack.Screen name="View blogs" component={ViewScreen} />
+        <Stack.Screen name="Create blog" component={AddScreen} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Change password" component={ChangeScreen} />
+        <Stack.Screen name="Personal info" component={PersonalScreen} />
+        <Stack.Screen name="Our blogs" component={BlogScreen} />
+        <Stack.Screen name="Update blog" component={UpdateScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -426,5 +757,66 @@ const styles = StyleSheet.create({
   },
   space_between_text: {
     margin: 5,
-  }
+  },
+  view_container: {
+    flexDirection: "column",
+    justifyContent: 'flex-start',
+  },
+  SectionStyle: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderWidth: 0.5,
+    borderColor: '#000',
+    height: 45,
+    borderRadius: 5,
+    marginEnd: 20,
+    marginStart: 20,
+},
+ImageStyle: {
+    padding: 10,
+    marginEnd: 15,
+    marginStart: 15,
+    marginTop: 5,
+    marginBottom: 5,
+    height: 25,
+    width: 25,
+    resizeMode: 'stretch',
+    alignItems: 'center',
+},
+bottomView: {
+  width: '100%', 
+  justifyContent: 'center', 
+  alignItems: 'center',
+  position: 'absolute',
+  color: "#fff",
+  bottom: 10
+},
+button_full_bg: {
+  width: '80%', 
+  alignItems: 'center',
+  backgroundColor: '#f67d48',
+  margin: 20,
+  padding: 10,
+  borderRadius: 10,
+  textTransform: 'lowercase', // Notice this updates the default style
+},
+profile_title: {
+  marginTop: 10,
+  fontSize: 20,
+  fontWeight: "bold",
+  color: "#000"
+},
+profile_text_content: {
+  marginTop: 10,
+  color: "#000",
+  fontSize: 16,
+},
+personal_bg_image: {
+  flex: 1,
+},
+personal_container: {
+  flex: 1,
+},
 });
